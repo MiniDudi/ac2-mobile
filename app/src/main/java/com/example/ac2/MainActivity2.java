@@ -1,5 +1,9 @@
 package com.example.ac2;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -53,11 +57,17 @@ public class MainActivity2 extends AppCompatActivity {
             btnSalvar.setOnClickListener(v -> {
                 String nome = etNome.getText().toString();
                 String descricao = etDescricao.getText().toString();
-                String horarioTexto = etHorario.getText().toString();
+                String horarioTexto = etHorario.getText().toString(); // espera algo tipo "23:11"
+
                 try {
-                    horario = sdf.parse(horarioTexto);
+                    // Junta a data de hoje com a hora digitada
+                    String dataHoje = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+                    String horarioCompleto = dataHoje + " " + horarioTexto;
+
+                    horario = sdf.parse(horarioCompleto);
                 } catch (ParseException e) {
-                    throw new RuntimeException(e);
+                    Toast.makeText(this, "Formato de horário inválido! Use HH:mm", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 if (!nome.isEmpty() && !descricao.isEmpty()) {
@@ -68,8 +78,11 @@ public class MainActivity2 extends AppCompatActivity {
                         etDescricao.setText("");
                         etHorario.setText("");
 
+                        agendarNotificacao(nome, horario);
+
                         Intent intent = new Intent(MainActivity2.this, MainActivity.class);
                         startActivity(intent);
+
                     } else {
                         Toast.makeText(this, "Erro ao salvar!", Toast.LENGTH_SHORT).show();
                     }
@@ -78,9 +91,21 @@ public class MainActivity2 extends AppCompatActivity {
                 }
             });
 
+
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    @SuppressLint("ScheduleExactAlarm")
+    private void agendarNotificacao(String nome, Date horario) {
+        Intent intent = new Intent(this, AppCanalComunicacao.class);
+        intent.putExtra("nome", nome);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) horario.getTime(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, horario.getTime(), pendingIntent);
     }
 }

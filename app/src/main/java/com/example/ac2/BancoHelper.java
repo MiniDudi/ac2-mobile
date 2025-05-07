@@ -10,13 +10,13 @@ import java.util.Date;
 
 public class BancoHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "meubanco.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String TABLE_NAME = "medicamentos";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NOME = "nome";
     private static final String COLUMN_HORARIO = "horario";
-    private static final Boolean COLUMN_CONSUMO = Boolean.valueOf("consumo");
+    private static final String COLUMN_CONSUMO = "consumo";
 
 
     public BancoHelper(Context context) {
@@ -28,8 +28,8 @@ public class BancoHelper extends SQLiteOpenHelper {
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_NOME + " TEXT, "
-                + COLUMN_HORARIO + " TEXT" +
-                 COLUMN_CONSUMO + "TEXT)";
+                + COLUMN_HORARIO + " TEXT, "
+                + COLUMN_CONSUMO + " TEXT)";
         db.execSQL(CREATE_TABLE);
     }
 

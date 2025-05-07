@@ -1,5 +1,9 @@
 package com.example.ac2;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -89,6 +93,8 @@ public class EditarMedicamento extends AppCompatActivity {
                         etDescricao.setText("");
                         etHorario.setText("");
 
+                        agendarNotificacao(nome, horario);
+
                         Intent intent = new Intent(EditarMedicamento.this, MainActivity.class);
                         startActivity(intent);
 
@@ -105,4 +111,16 @@ public class EditarMedicamento extends AppCompatActivity {
         }
 
     }
+
+    @SuppressLint("ScheduleExactAlarm")
+    private void agendarNotificacao(String nome, Date horario) {
+        Intent intent = new Intent(this, AppCanalComunicacao.class);
+        intent.putExtra("nome", nome);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) horario.getTime(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, horario.getTime(), pendingIntent);
+    }
+
 }

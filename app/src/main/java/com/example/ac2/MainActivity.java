@@ -1,8 +1,16 @@
 package com.example.ac2;
 
+import static android.app.PendingIntent.FLAG_MUTABLE;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -64,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
             btnEdit.setEnabled(false);
             btnExclude.setEnabled(false);
             btnTomado.setEnabled(false);
+
+            Intent serviceIntent = new Intent(this, BackgroundService.class);
+            startService(serviceIntent);
 
             btnSalvar.setOnClickListener(v -> {
                 Intent intent = new Intent(MainActivity.this, MainActivity2.class);
@@ -146,4 +158,43 @@ public class MainActivity extends AppCompatActivity {
         listViewMedicamentos.setAdapter(adapter);
     }
 
+    public static class BackgroundService extends Service {
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
+        private void showNotification() {
+            Intent intent = new Intent(this, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_MUTABLE);
+            Notification notification = new NotificationCompat.Builder(this, "default")
+                    .setContentTitle("Notificação de Evento")
+                    .setContentText("Algo aconteceu!")
+                    .setContentIntent(pendingIntent)
+                    .build();
+            NotificationManager notificationManager = (NotificationManager)
+                    getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(1, notification);
+        }
+
+        @Override
+        public int onStartCommand(Intent intent, int flags, int startId) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(5000);
+                        showNotification();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            return START_STICKY;
+        }
+
+
+    }
+
 }
+
