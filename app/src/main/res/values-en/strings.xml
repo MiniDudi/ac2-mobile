@@ -1,0 +1,14 @@
+<resources>
+    <string name="hint_nome">Edit name</string>
+    <string name="hint_descricao">Edit description</string>
+    <string name="hint_horario">Edit time</string>
+    <string name="btn_editar">Edit</string>
+    <string name="btn_voltar">Back</string>
+    <string name="btn_criar_medicamento">Create Medication</string>
+    <string name="btn_editar_medicamento">Edit Medication</string>
+    <string name="btn_excluir_medicamento">Delete Medication</string>
+    <string name="btn_editar_tomado">Edit Taken Status</string>
+    <string name="hint_alterar_nome">Edit name</string>
+    <string name="hint_alterar_descricao">Edit description</string>
+    <string name="hint_alterar_horario">Edit time (HH:mm)</string>
+</resources>
